@@ -15,20 +15,22 @@ interface BookingProps {
   isVisible: boolean;
 }
 
+type Status = "idle" | "sending" | "success" | "error";
+
+interface FieldErrors {
+  name?: boolean;
+  email?: boolean;
+  message?: boolean;
+}
+
 export default function Booking({ onClose, text, isVisible }: BookingProps) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<
-    "idle" | "sending" | "success" | "error"
-  >("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [errors, setErrors] = useState<{
-    name?: boolean;
-    email?: boolean;
-    message?: boolean;
-  }>({});
-  const [countdown, setCountdown] = useState(6);
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [countdown, setCountdown] = useState<number>(6);
 
   useEffect(() => {
     if (status === "success" && countdown > 0) {
@@ -40,8 +42,8 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
     }
   }, [status, countdown]);
 
-  const validateFields = () => {
-    const newErrors: typeof errors = {};
+  const validateFields = (): boolean => {
+    const newErrors: FieldErrors = {};
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!name.trim()) newErrors.name = true;
@@ -52,7 +54,7 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMsg("");
 
@@ -75,13 +77,17 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
       if (!res.ok) throw new Error(data.message || "Something went wrong");
 
       setStatus("success");
-    } catch (error: any) {
-      setErrorMsg(error.message || "Failed to send email");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrorMsg(error.message || "Failed to send email");
+      } else {
+        setErrorMsg("Failed to send email");
+      }
       setStatus("error");
     }
   };
 
-  const resetForm = () => {
+  const resetForm = (): void => {
     setName("");
     setEmail("");
     setMessage("");
