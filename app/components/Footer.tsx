@@ -10,6 +10,7 @@ import {
   Youtube,
   Linkedin,
   Newspaper,
+  Globe2,
 } from "lucide-react";
 import Image from "next/image";
 import Booking from "./BookingForm";
@@ -85,6 +86,18 @@ export default function Footer() {
           <h3 className="text-lg font-semibold mb-3">Follow Us</h3>
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
+              <Globe2 size={18} />
+              <a
+                href="https://www.tiktok.com/@motsistar.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary"
+                aria-label="TikTok"
+              >
+                TikTok
+              </a>
+            </li>
+            <li className="flex items-center gap-2">
               <Facebook size={18} />
               <a
                 href="https://www.facebook.com/tatendablessing.motsi.5"
@@ -111,7 +124,7 @@ export default function Footer() {
             <li className="flex items-center gap-2">
               <Youtube size={18} />
               <a
-                href="https://www.youtube.com/@Motsi-tb"
+                href="https://www.youtube.com/@motsistar"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary"
@@ -123,7 +136,7 @@ export default function Footer() {
             <li className="flex items-center gap-2">
               <Linkedin size={18} />
               <a
-                href="https://www.linkedin.com/in/motsi-motsi-206192231"
+                href="https://www.linkedin.com/in/motsistar"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary"

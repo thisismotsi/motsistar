@@ -31,8 +31,8 @@ export default function AffiliateSection() {
           Expand Your Learning with Our Trusted Partners
         </h2>
         <p className="text-gray-600 mb-10 max-w-2xl mx-auto">
-          We’ve partnered with world-renowned educational platforms to help you
-          learn smarter, deeper, and broader.
+          We partner with world-renowned educational platforms to help you learn
+          smarter, deeper, and broader.
         </p>
 
         <div className="mb-12">

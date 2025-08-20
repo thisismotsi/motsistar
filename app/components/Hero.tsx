@@ -23,8 +23,8 @@ export default function Hero() {
           Empowering the Future of Learning
         </h1>
         <p className="text-lg md:text-xl text-gray-200 max-w-2xl mb-8">
-          MOTSISTAR is home where stars are born, maintained and activated
-          through to elegant, engaging, and effective education. Explore
+          MOTSISTAR is home where <em>stars</em> are born, maintained and
+          activated through elegant, engaging, and effective education. Explore
           lessons, resources, and one-on-one guidance — all in one place.
         </p>
         <Link

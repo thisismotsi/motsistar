@@ -9,16 +9,22 @@ import NavigationButtons from "./components/NavigationButtons";
 export const metadata = {
   title: "MOTSISTAR | Learn, Think & Thrive",
   description:
-    "Access high-quality educational resources including revision notes, past papers, curriculum guides, video lessons, and personalized tutoring for IEB, Eswatini, and Cambridge learners. Empowering students in Africa and beyond to master math, science, coding, and more.",
+    "Access high-quality educational resources including revision notes, curriculum guides, video lessons, and personalized tutoring for IEB, Eswatini, and Cambridge learners. Empowering students in Africa and beyond to master math, science, coding, and more.",
   keywords: [
     "MOTSISTAR",
     "Education",
-    "IEB past papers",
     "Cambridge revision notes",
-    "Eswatini curriculum",
-    "Specimen papers",
+    "Eswatini tutorial",
+    "Examination preparation",
+    "IGCSE",
     "Answer sheets",
     "Math tutorials",
+    "Physics tutorials",
+    "Physical science tutorials",
+    "Chemistry tutorials",
+    "Combined Science tutorials",
+    "Additional math tutorials",
+    "Mathematics tutorials",
     "Science learning",
     "Coding for students",
     "Scholarship links",
@@ -54,7 +60,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "MOTSISTAR | Learn, Think & Thrive",
     description:
-      "Study smarter with MOTSISTAR: revision notes, past papers, tutoring, and more for African learners.",
+      "Study smarter with MOTSISTAR: revision notes, tutoring, and more for African learners and beyond.",
     creator: "@Motsi135733",
     images: ["/og-image.png"],
   },
@@ -79,7 +85,7 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          <div className="sticky top-0 z-50 bg-white border-b shadow-sm">
+          <div className="sticky top-0 z-50 bg-white shadow-sm">
             <Navbar />
           </div>
           <main>{children}</main>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, Send as SendIcon } from "lucide-react";
 
-interface BookingProps {
+// Use a more specific interface name for clarity
+interface ContactUsProps {
   onClose: () => void;
   text?: string;
   isVisible: boolean;
@@ -17,7 +18,11 @@ interface FieldErrors {
   message?: boolean;
 }
 
-export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
+export default function ContactUs({
+  onClose,
+  text,
+  isVisible,
+}: ContactUsProps) {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
@@ -26,15 +31,27 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [countdown, setCountdown] = useState<number>(6);
 
+  // Memoize resetForm to safely include it in the useEffect dependency array
+  const resetForm = useCallback((): void => {
+    setName("");
+    setEmail("");
+    setMessage("");
+    setStatus("idle");
+    setErrorMsg("");
+    setErrors({});
+    setCountdown(6); // Reset countdown for the next submission
+  }, []);
+
   useEffect(() => {
     if (status === "success" && countdown > 0) {
       const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
       return () => clearTimeout(timer);
     }
     if (countdown === 0) {
-      window.location.href = "/";
+      onClose();
+      resetForm(); // Reset the form state after closing
     }
-  }, [status, countdown]);
+  }, [status, countdown, onClose, resetForm]);
 
   const validateFields = (): boolean => {
     const newErrors: FieldErrors = {};
@@ -75,19 +92,10 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
       if (error instanceof Error) {
         setErrorMsg(error.message || "Failed to send email");
       } else {
-        setErrorMsg("Failed to send email");
+        setErrorMsg("An unexpected error occurred");
       }
       setStatus("error");
     }
-  };
-
-  const resetForm = () => {
-    setName("");
-    setEmail("");
-    setMessage("");
-    setStatus("idle");
-    setErrorMsg("");
-    setErrors({});
   };
 
   const inputBaseStyle =
@@ -95,9 +103,10 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
   const validStyle = "border-purple-500 focus:ring-purple-500";
   const errorStyle = "border-red-600 focus:ring-red-500";
 
+  // A reusable button for closing the modal
   const CloseButton = () => (
     <button
-      type="button"
+      type="button" // Important for buttons inside a form that shouldn't submit
       aria-label="Close form"
       onClick={onClose}
       className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full hover:bg-red-800 z-50"
@@ -108,6 +117,7 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
 
   if (!isVisible) return null;
 
+  // Success State View
   if (status === "success") {
     return (
       <section
@@ -117,25 +127,30 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
         aria-labelledby="contact-success-title"
       >
         <CloseButton />
-        <div className="text-green-600 text-4xl mb-4">✓</div>
+        <div className="text-green-600 text-4xl mb-4" aria-hidden="true">
+          ✓
+        </div>
         <h2 id="contact-success-title" className="text-2xl font-bold mb-2">
-          Message sent!
+          Message Sent!
         </h2>
         <p className="mb-4">
-          Thank you for messaging us. Redirecting to home page in {countdown}{" "}
-          seconds.
+          Thank you! We&#39;ll be in touch soon. Closing in {countdown} seconds.
         </p>
         <button
           type="button"
-          onClick={() => (window.location.href = "/")}
+          onClick={() => {
+            onClose();
+            resetForm();
+          }}
           className="bg-purple-700 hover:bg-purple-900 text-white px-6 py-2 rounded-md transition"
         >
-          Go to Home Page Now
+          Close Now
         </button>
       </section>
     );
   }
 
+  // Error State View
   if (status === "error") {
     return (
       <section
@@ -145,7 +160,9 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
         aria-labelledby="contact-error-title"
       >
         <CloseButton />
-        <div className="text-red-600 text-4xl mb-4">✗</div>
+        <div className="text-red-600 text-4xl mb-4" aria-hidden="true">
+          ✗
+        </div>
         <h2 id="contact-error-title" className="text-2xl font-bold mb-2">
           Failed to Send
         </h2>
@@ -161,6 +178,7 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
     );
   }
 
+  // Default Form View
   return (
     <section
       className="relative max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg max-h-[90vh] overflow-y-auto"
@@ -173,9 +191,9 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
         id="contact-form-title"
         className="text-3xl font-bold text-primary mb-6 text-center"
       >
-        {text || "Send us an email and we will contact you back"}
+        {text || "Send us a message"}
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-6 text-left">
+      <form onSubmit={handleSubmit} className="space-y-6 text-left" noValidate>
         <div>
           <label className="block mb-2 font-medium" htmlFor="contact-name">
             Name
@@ -194,6 +212,7 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
             className={`${inputBaseStyle} ${
               errors.name ? errorStyle : validStyle
             }`}
+            required
           />
         </div>
 
@@ -216,6 +235,7 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
             className={`${inputBaseStyle} ${
               errors.email ? errorStyle : validStyle
             }`}
+            required
           />
         </div>
 
@@ -236,11 +256,14 @@ export default function ContactUs({ onClose, text, isVisible }: BookingProps) {
             className={`${inputBaseStyle} resize-none min-h-[120px] ${
               errors.message ? errorStyle : validStyle
             }`}
+            required
           ></textarea>
         </div>
 
         {errorMsg && (
-          <p className="text-red-600 mb-4 font-semibold">{errorMsg}</p>
+          <p role="alert" className="text-red-600 font-semibold">
+            {errorMsg}
+          </p>
         )}
 
         <button

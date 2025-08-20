@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Button from "../components/ui/Button";
@@ -21,11 +21,36 @@ const navLinks = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const pathname = usePathname();
+
+  // Handle scroll detection
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY) {
+        // scrolling down → hide navbar
+        setShowNavbar(false);
+      } else {
+        // scrolling up → show navbar
+        setShowNavbar(true);
+      }
+      setLastScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   return (
     <>
-      <header className="bg-white shadow-md fixed top-0 left-0 w-full z-50 h-20">
+      <header
+        className={`bg-white fixed top-0 left-0 w-full z-50 h-20 transition-all duration-300 ${
+          showNavbar
+            ? "translate-y-0 opacity-100 shadow-md"
+            : "-translate-y-full opacity-0 pointer-events-none shadow-none"
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
@@ -69,7 +94,11 @@ export default function Navbar() {
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
           >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            {menuOpen ? (
+              <X size={24} className="text-red-700" />
+            ) : (
+              <Menu size={24} />
+            )}
           </button>
         </div>
 

@@ -24,7 +24,7 @@ interface ConceptTopicsProps {
 
 export const ConceptTopics: React.FC<ConceptTopicsProps> = ({ concepts }) => {
   return (
-    <div className="space-y-4">
+    <div>
       {Object.entries(concepts).map(([subject, detail]) => (
         <div key={subject}>
           <h2 className="text-lg font-semibold mb-2">{subject}</h2>
@@ -36,9 +36,7 @@ export const ConceptTopics: React.FC<ConceptTopicsProps> = ({ concepts }) => {
                   <li key={i}>
                     <a
                       href={topic.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-gray-800 hover:underline"
+                      className="text-blue-500 hover:underline"
                     >
                       {topic.topic}
                     </a>

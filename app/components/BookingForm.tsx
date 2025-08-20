@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   X,
   PhoneCall,
@@ -32,12 +32,23 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [countdown, setCountdown] = useState<number>(6);
 
+  const resetForm = useCallback((): void => {
+    setName("");
+    setEmail("");
+    setMessage("");
+    setStatus("idle");
+    setErrorMsg("");
+    setErrors({});
+    setCountdown(6);
+  }, []);
+
   useEffect(() => {
     if (status === "success" && countdown > 0) {
       const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
       return () => clearTimeout(timer);
     }
     if (countdown === 0) {
+      // Redirecting on success for this form
       window.location.href = "/";
     }
   }, [status, countdown]);
@@ -81,19 +92,10 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
       if (error instanceof Error) {
         setErrorMsg(error.message || "Failed to send email");
       } else {
-        setErrorMsg("Failed to send email");
+        setErrorMsg("An unexpected error occurred");
       }
       setStatus("error");
     }
-  };
-
-  const resetForm = (): void => {
-    setName("");
-    setEmail("");
-    setMessage("");
-    setStatus("idle");
-    setErrorMsg("");
-    setErrors({});
   };
 
   const inputBaseStyle =
@@ -103,6 +105,7 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
 
   const CloseButton = () => (
     <button
+      type="button"
       aria-label="Close form"
       onClick={onClose}
       className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full hover:bg-red-800 z-50"
@@ -141,15 +144,25 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
 
   if (status === "success") {
     return (
-      <section className="relative max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg text-center max-h-[90vh] overflow-y-auto">
+      <section
+        className="relative max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg text-center max-h-[90vh] overflow-y-auto"
+        aria-modal="true"
+        role="dialog"
+        aria-labelledby="booking-success-title"
+      >
         <CloseButton />
-        <div className="text-green-600 text-4xl mb-4">✓</div>
-        <h2 className="text-2xl font-bold mb-2">Booking Request Sent!</h2>
+        <div className="text-green-600 text-4xl mb-4" aria-hidden="true">
+          ✓
+        </div>
+        <h2 id="booking-success-title" className="text-2xl font-bold mb-2">
+          Booking Request Sent!
+        </h2>
         <p className="mb-4">
           Thank you for your request. Redirecting to home page in {countdown}{" "}
           seconds.
         </p>
         <button
+          type="button"
           onClick={() => (window.location.href = "/")}
           className="bg-purple-700 hover:bg-purple-900 text-white px-6 py-2 rounded-md transition"
         >
@@ -161,12 +174,22 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
 
   if (status === "error") {
     return (
-      <section className="relative max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg text-center max-h-[90vh] overflow-y-auto">
+      <section
+        className="relative max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg text-center max-h-[90vh] overflow-y-auto"
+        aria-modal="true"
+        role="dialog"
+        aria-labelledby="booking-error-title"
+      >
         <CloseButton />
-        <div className="text-red-600 text-4xl mb-4">✗</div>
-        <h2 className="text-2xl font-bold mb-2">Failed to Send</h2>
+        <div className="text-red-600 text-4xl mb-4" aria-hidden="true">
+          ✗
+        </div>
+        <h2 id="booking-error-title" className="text-2xl font-bold mb-2">
+          Failed to Send
+        </h2>
         <p className="mb-4">{errorMsg}</p>
         <button
+          type="button"
           onClick={resetForm}
           className="bg-purple-700 hover:bg-purple-900 text-white px-6 py-2 rounded-md transition"
         >
@@ -177,17 +200,29 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
   }
 
   return (
-    <section className="relative max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg max-h-[90vh] overflow-y-auto">
+    <section
+      className="relative max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg max-h-[90vh] overflow-y-auto"
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="booking-form-title"
+    >
       <CloseButton />
-      <h2 className="text-3xl font-bold text-primary mb-6 text-center">
+      <h2
+        id="booking-form-title"
+        className="text-3xl font-bold text-primary mb-6 text-center"
+      >
         {text || "Book a One-on-One Session"}
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-6 text-left">
+      <form onSubmit={handleSubmit} className="space-y-6 text-left" noValidate>
         <div>
-          <label className="block mb-2 font-medium">Name</label>
+          <label className="block mb-2 font-medium" htmlFor="booking-name">
+            Name
+          </label>
           <input
+            id="booking-name"
             name="name"
             type="text"
+            autoComplete="name"
             value={name}
             onChange={(e) => {
               setName(e.target.value);
@@ -197,14 +232,19 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
             className={`${inputBaseStyle} ${
               errors.name ? errorStyle : validStyle
             }`}
+            required
           />
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">Email</label>
+          <label className="block mb-2 font-medium" htmlFor="booking-email">
+            Email
+          </label>
           <input
+            id="booking-email"
             name="email"
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -215,12 +255,16 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
             className={`${inputBaseStyle} ${
               errors.email ? errorStyle : validStyle
             }`}
+            required
           />
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">Message</label>
+          <label className="block mb-2 font-medium" htmlFor="booking-message">
+            Message
+          </label>
           <textarea
+            id="booking-message"
             name="message"
             value={message}
             onChange={(e) => {
@@ -232,11 +276,14 @@ export default function Booking({ onClose, text, isVisible }: BookingProps) {
             className={`${inputBaseStyle} resize-none min-h-[120px] ${
               errors.message ? errorStyle : validStyle
             }`}
+            required
           ></textarea>
         </div>
 
         {errorMsg && (
-          <p className="text-red-600 mb-4 font-semibold">{errorMsg}</p>
+          <p role="alert" className="text-red-600 mb-4 font-semibold">
+            {errorMsg}
+          </p>
         )}
 
         <button

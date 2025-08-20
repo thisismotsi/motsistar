@@ -1,38 +1,52 @@
-export type VideoData = {
+// lessonsData.ts
+
+export type Lesson = {
   id: string;
   title: string;
-  subject: string;
 };
 
-export const allVideos = [
-  { id: "WsQQvHm4lSw", title: "Learn Algebra in 10 Minutes", subject: "Math" },
-  { id: "ZAqIoDhornk", title: "Basic Physics Concepts", subject: "Physics" },
-  {
-    id: "OmJ-4B-mS-Y",
-    title: "Introduction to Chemistry",
-    subject: "Chemistry",
+export type LessonsData = {
+  [grade: string]: {
+    subjects: {
+      [subject: string]: {
+        id: string;
+        title: string;
+      }[];
+    };
+  };
+};
+
+export const lessons: LessonsData = {
+  "grade-12": {
+    subjects: {
+      Math: [
+        { id: "WsQQvHm4lSw", title: "Learn Algebra in 10 Minutes" },
+        { id: "AVWrB1vt5nM", title: "Calculus Basics" },
+      ],
+      Physics: [
+        { id: "ZAqIoDhornk", title: "Basic Physics Concepts" },
+        { id: "YWGZ12ohMJU", title: "Newton’s Laws of Motion" },
+      ],
+      Chemistry: [
+        { id: "OmJ-4B-mS-Y", title: "Introduction to Chemistry" },
+        { id: "OZU7HMV4fNA", title: "Organic Chemistry Overview" },
+      ],
+      Biology: [
+        { id: "V6yixyiJcos", title: "Biology: Cells & Organisms" },
+        { id: "DCh3N2ulmJY", title: "Genetics Simplified" },
+      ],
+      "Tips & Tricks": [
+        { id: "PXwStduNw14", title: "Study Tips and Tricks" },
+        { id: "CxGSnA-RTsA", title: "Exam Preparation Tips" },
+      ],
+    },
   },
-  {
-    id: "V6yixyiJcos",
-    title: "Biology: Cells & Organisms",
-    subject: "Biology",
+  "grade-11": {
+    subjects: {
+      Biology: [
+        { id: "V6yixyiJcos", title: "Biology: Cells & Organisms" },
+        { id: "DCh3N2ulmJY", title: "Genetics Simplified" },
+      ],
+    },
   },
-  {
-    id: "PXwStduNw14",
-    title: "Study Tips and Tricks",
-    subject: "Tips & Tricks",
-  },
-  { id: "AVWrB1vt5nM", title: "Calculus Basics", subject: "Math" },
-  { id: "YWGZ12ohMJU", title: "Newton’s Laws of Motion", subject: "Physics" },
-  {
-    id: "OZU7HMV4fNA",
-    title: "Organic Chemistry Overview",
-    subject: "Chemistry",
-  },
-  { id: "DCh3N2ulmJY", title: "Genetics Simplified", subject: "Biology" },
-  {
-    id: "CxGSnA-RTsA",
-    title: "Exam Preparation Tips",
-    subject: "Tips & Tricks",
-  },
-];
+};

@@ -2,33 +2,84 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { allVideos } from "@/data/videos";
+import { LessonsData } from "@/data/videos";
 import Button from "./ui/Button";
 import CategoryFilter from "./ui/CategoryFilter";
 
-export default function VideoFilterSection() {
+type Props = {
+  lessons: LessonsData;
+};
+
+export default function VideoFilterSection({ lessons }: Props) {
+  const [selectedGrade, setSelectedGrade] = useState<keyof typeof lessons>(
+    Object.keys(lessons)[0] as keyof typeof lessons // ✅ fallback to first grade
+  );
   const [selectedSubject, setSelectedSubject] = useState("All");
   const [videosToShow, setVideosToShow] = useState(4);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const subjects = ["All", ...new Set(allVideos.map((v) => v.subject))];
+  // ✅ guard against missing lessons
+  if (!lessons || !lessons[selectedGrade]) {
+    return <p className="text-center text-gray-500">No lessons available.</p>;
+  }
+
+  const subjects = ["All", ...Object.keys(lessons[selectedGrade].subjects)];
+
+  const allVideosForGrade = Object.values(
+    lessons[selectedGrade].subjects
+  ).flat();
 
   const filteredVideos =
     selectedSubject === "All"
-      ? allVideos
-      : allVideos.filter((video) => video.subject === selectedSubject);
+      ? allVideosForGrade
+      : lessons[selectedGrade].subjects[selectedSubject] || [];
 
-  const videosDisplayed = filteredVideos.slice(0, videosToShow);
+  const searchedVideos = filteredVideos.filter((video) =>
+    video.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const videosDisplayed = searchedVideos.slice(0, videosToShow);
 
   const showMore = () => setVideosToShow((prev) => prev + 4);
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-12">
       <h3 className="text-2xl font-bold mb-6 text-primary text-center">
-        What subject are you interested in?
+        Choose Grade & Subject
       </h3>
+      {/* Search */}
+      <div className="mb-8">
+        <input
+          type="text"
+          placeholder="Search lessons..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
+        />
+      </div>
+      {/* Grade Selector */}
+      <div className="flex justify-center gap-4 mb-6">
+        {Object.keys(lessons).map((grade) => (
+          <Button
+            key={grade}
+            onClick={() => {
+              setSelectedGrade(grade as keyof typeof lessons);
+              setSelectedSubject("All");
+              setVideosToShow(4);
+            }}
+            className={`px-4 py-2 rounded-full font-medium ${
+              selectedGrade === grade
+                ? "bg-purple-600 text-white"
+                : "bg-gray-200 text-gray-800"
+            }`}
+          >
+            {grade.charAt(0).toUpperCase() + grade.slice(1).replace("-", " ")}
+          </Button>
+        ))}
+      </div>
 
       {/* Subject Filter */}
-      <div className="mb-8">
+      <div className="mb-6">
         <CategoryFilter
           categories={subjects}
           selected={selectedSubject}
@@ -39,7 +90,7 @@ export default function VideoFilterSection() {
         />
       </div>
 
-      {/* Video Cards Grid */}
+      {/* Video Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {videosDisplayed.map(({ id, title }) => (
           <a
@@ -55,11 +106,7 @@ export default function VideoFilterSection() {
                 src={`https://img.youtube.com/vi/${id}/hqdefault.jpg`}
                 alt={title}
                 fill
-                sizes="(max-width: 768px) 100vw,
-                       (max-width: 1200px) 50vw,
-                       25vw"
                 className="object-cover"
-                // Optionally, add a fallback here if needed
               />
             </div>
             <div className="p-3 bg-white">
@@ -70,7 +117,7 @@ export default function VideoFilterSection() {
       </div>
 
       {/* Show More Button */}
-      {videosToShow < filteredVideos.length && (
+      {videosToShow < searchedVideos.length && (
         <div className="flex justify-center mt-8">
           <Button onClick={showMore} variant="outline">
             Show More
