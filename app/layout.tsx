@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "@/theme";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
