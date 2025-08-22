@@ -1,26 +1,25 @@
 import { useEffect, useRef } from "react";
 
-export default function Geogebra() {
-  const appRef = useRef<HTMLDivElement | null>(null);
+export default function GeoGebra() {
+  const appRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
     const script = document.createElement("script");
-    script.src = "https://www.geogebra.org/scripts/deployggb.js";
+    script.src = "https://www.geogebra.org/apps/deployggb.js";
     script.async = true;
     script.onload = () => {
       if (window.GGBApplet && appRef.current) {
-        new window.GGBApplet(
-          {
-            appName: "graphing",
-            width: 800,
-            height: 600,
-            showToolBar: true,
-            showAlgebraInput: true,
-            showMenuBar: true,
-          },
-          true
-        ).inject(appRef.current);
+        const applet = new window.GGBApplet({
+          appName: "graphing",
+          width: 800,
+          height: 600,
+          showToolBar: true,
+          showAlgebraInput: true,
+          showMenuBar: false,
+        });
+        applet.inject(appRef.current.id);
       }
     };
     document.body.appendChild(script);
@@ -28,9 +27,9 @@ export default function Geogebra() {
 
   return (
     <div
+      id="ggb-element"
       ref={appRef}
-      className="w-full overflow-auto"
-      style={{ height: "600px" }}
+      style={{ width: "100%", height: "600px" }}
     />
   );
 }

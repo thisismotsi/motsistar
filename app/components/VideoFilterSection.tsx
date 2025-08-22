@@ -5,6 +5,7 @@ import { useState } from "react";
 import { LessonsData } from "@/data/videos";
 import Button from "./ui/Button";
 import CategoryFilter from "./ui/CategoryFilter";
+import Input from "./ui/Input";
 
 type Props = {
   lessons: LessonsData;
@@ -49,12 +50,12 @@ export default function VideoFilterSection({ lessons }: Props) {
       </h3>
       {/* Search */}
       <div className="mb-8">
-        <input
+        <Input
           type="text"
-          placeholder="Search lessons..."
+          placeholder="Search lessons by topic.."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
+          className="w-full px-4 py-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500"
         />
       </div>
       {/* Grade Selector */}
@@ -67,10 +68,10 @@ export default function VideoFilterSection({ lessons }: Props) {
               setSelectedSubject("All");
               setVideosToShow(4);
             }}
-            className={`px-4 py-2 rounded-full font-medium ${
+            className={`px-4 py-1 rounded-full text-sm ${
               selectedGrade === grade
                 ? "bg-purple-600 text-white"
-                : "bg-gray-200 text-gray-800"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-400"
             }`}
           >
             {grade.charAt(0).toUpperCase() + grade.slice(1).replace("-", " ")}

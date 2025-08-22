@@ -60,7 +60,19 @@ export default function InteractiveLearningPage() {
           </Link>{" "}
           . Please visit the Official sites for full access and guidelines.
         </h3>
-
+        {/* Search Bar */}
+        <div className="flex justify-center mb-2">
+          <Input
+            placeholder="Search tools..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setToolsToShow(INITIAL_TOOLS_TO_SHOW);
+            }}
+            className="border-purple-400"
+            aria-label="Search tools"
+          />
+        </div>
         {/* Category Filter */}
         <CategoryFilter
           categories={categories}
@@ -69,22 +81,8 @@ export default function InteractiveLearningPage() {
             setSelected(cat);
             setToolsToShow(INITIAL_TOOLS_TO_SHOW);
           }}
-          className="mb-4"
+          className="mb-6"
         />
-
-        {/* Search Bar */}
-        <div className="flex justify-center mb-10">
-          <Input
-            placeholder="Search tools..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setToolsToShow(INITIAL_TOOLS_TO_SHOW);
-            }}
-            className="w-full max-w-md"
-            aria-label="Search tools"
-          />
-        </div>
 
         {/* Tool Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
