@@ -20,33 +20,17 @@ export const lessons: LessonsData = {
   "grade-12": {
     subjects: {
       Math: [
-        { id: "WsQQvHm4lSw", title: "Learn Algebra in 10 Minutes" },
-        { id: "AVWrB1vt5nM", title: "Calculus Basics" },
+        { id: "eZaAQ2hZaUA", title: "Magnitude and Direction of Vectors" },
       ],
-      Physics: [
-        { id: "ZAqIoDhornk", title: "Basic Physics Concepts" },
-        { id: "YWGZ12ohMJU", title: "Newton’s Laws of Motion" },
-      ],
-      Chemistry: [
-        { id: "OmJ-4B-mS-Y", title: "Introduction to Chemistry" },
-        { id: "OZU7HMV4fNA", title: "Organic Chemistry Overview" },
-      ],
-      Biology: [
-        { id: "V6yixyiJcos", title: "Biology: Cells & Organisms" },
-        { id: "DCh3N2ulmJY", title: "Genetics Simplified" },
-      ],
-      "Tips & Tricks": [
-        { id: "PXwStduNw14", title: "Study Tips and Tricks" },
-        { id: "CxGSnA-RTsA", title: "Exam Preparation Tips" },
-      ],
+      Physics: [],
+      Chemistry: [],
+      Biology: [],
+      "Tips & Tricks": [],
     },
   },
   "grade-11": {
     subjects: {
-      Biology: [
-        { id: "V6yixyiJcos", title: "Biology: Cells & Organisms" },
-        { id: "DCh3N2ulmJY", title: "Genetics Simplified" },
-      ],
+      Biology: [],
     },
   },
 };
