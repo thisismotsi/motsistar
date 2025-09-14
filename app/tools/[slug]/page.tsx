@@ -100,6 +100,12 @@ const toolComponentMap: {
     loading: () => <ToolLoading />,
     ssr: false,
   }),
+
+  // ✅ Add Polygon Explorer here
+  "polygon-explorer": dynamic(() => import("../polygon/PolygonTool"), {
+    loading: () => <ToolLoading />,
+    ssr: false,
+  }),
 };
 
 export default function ToolPage() {
