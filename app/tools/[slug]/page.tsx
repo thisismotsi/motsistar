@@ -1,16 +1,12 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { toolsMap } from "@/data/tools";
 import type { Metadata } from "next";
 import ToolRenderer from "./ToolRenderer";
 
 // ✅ SEO Metadata
-export async function generateMetadata({
-  params,
-}: {
-  params?: { slug?: string };
-}): Promise<Metadata> {
-  // runtime-safe guard for params.slug to avoid build-time typing mismatch
+export async function generateMetadata(props: unknown): Promise<Metadata> {
+  // runtime-safe extraction without using `any`
+  const params = (props as { params?: { slug?: string } } | undefined)?.params;
   const slug = params && typeof params.slug === "string" ? params.slug : "";
   const tool = toolsMap[slug];
   if (!tool) {
@@ -68,8 +64,9 @@ export async function generateMetadata({
 
 // ✅ Page (Server Component)
 export default function ToolPage(props: unknown) {
-  // runtime-safe extraction to avoid Next.js PageProps constraint issues during build
-  const { params } = (props as { params?: { slug?: string } }) || {};
+  // runtime-safe extraction without using `any`
+  const { params } =
+    (props as { params?: { slug?: string } } | undefined) || {};
   const slug = params?.slug;
 
   if (!slug) return notFound();
