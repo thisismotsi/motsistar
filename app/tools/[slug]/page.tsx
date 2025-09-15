@@ -1,125 +1,75 @@
-"use client";
-
-import { useMemo } from "react";
-import { useParams, notFound } from "next/navigation";
-import dynamic from "next/dynamic";
+import { notFound } from "next/navigation";
 import Image from "next/image";
 import { toolsMap } from "@/data/tools";
-import type { ComponentType } from "react";
+import type { Metadata } from "next";
+import ToolRenderer from "./ToolRenderer";
 
-// A reusable loading component for a better user experience.
-const ToolLoading = () => (
-  <div className="flex justify-center items-center h-96 bg-gray-100 rounded-lg">
-    <div className="text-center">
-      <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-      <p className="mt-4 text-gray-600 font-medium">Loading Tool...</p>
-    </div>
-  </div>
-);
-
-// Map slugs to their dynamically imported components.
-// Each dynamic() call must use an inline object literal for options.
-const toolComponentMap: {
-  [key: string]: ComponentType<Record<string, unknown>>;
-} = {
-  "desmos-calculator": dynamic(() => import("../desmos"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "desmos-scientific-calculator": dynamic(
-    () => import("../desmos-scientific"),
-    {
-      loading: () => <ToolLoading />,
-      ssr: false,
-    }
-  ),
-  geogebra: dynamic(() => import("../geogebra"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  quizizz: dynamic(() => import("../quizizz"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  codesandbox: dynamic(() => import("../codesandbox"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  scratch: dynamic(() => import("../scratch"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "turbowarp-scratch": dynamic(() => import("../turbowarp"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-circuit-construction": dynamic(() => import("../phet/circuit-kit"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-graphing-lines": dynamic(() => import("../phet/graphing-lines"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-mass-spring": dynamic(() => import("../phet/mass-spring"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-masses-and-springs": dynamic(() => import("../phet/mass-spring"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-wave-on-a-string": dynamic(() => import("../phet/wave-string"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-wave-string": dynamic(() => import("../phet/wave-string"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-energy-forms": dynamic(() => import("../phet/energy-forms"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-physics": dynamic(() => import("../phet/physics"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-area-model-multiplication": dynamic(
-    () => import("../phet/area-model-multiplication"),
-    {
-      loading: () => <ToolLoading />,
-      ssr: false,
-    }
-  ),
-  "phet-ray-optics": dynamic(() => import("../phet/ray-optics"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-  "phet-molecule-shapes": dynamic(() => import("../phet/molecule-shapes"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-
-  // ✅ Add Polygon Explorer here
-  "polygon-explorer": dynamic(() => import("../polygon/PolygonTool"), {
-    loading: () => <ToolLoading />,
-    ssr: false,
-  }),
-};
-
-export default function ToolPage() {
-  const { slug } = useParams() as { slug: string };
-  const tool = toolsMap[slug];
-
-  const ToolComponent = useMemo(() => {
-    if (!slug) return null;
-    return toolComponentMap[slug] || null;
-  }, [slug]);
-
+// ✅ SEO Metadata
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const tool = toolsMap[params.slug];
   if (!tool) {
-    return notFound();
+    return {
+      title: "Tool Not Found | MotsiStar",
+      description: "The requested educational tool could not be found.",
+    };
   }
+
+  if (params.slug === "polygon-explorer") {
+    return {
+      title: "Polygon Explorer | Regular Polygon Tool & Calculator | MotsiStar",
+      description:
+        "Interactive tool to explore regular polygons. Learn about interior and exterior angles, side relationships, polygon names, and formulas. Includes animations, notes, and quizzes.",
+      keywords: [
+        "polygon tool",
+        "regular polygon calculator",
+        "polygon explorer",
+        "interior angle calculator",
+        "exterior angle calculator",
+        "geometry learning tool",
+        "MotsiStar",
+      ],
+      openGraph: {
+        title: "Polygon Explorer | MotsiStar",
+        description:
+          "Learn everything about polygons with this interactive tool: visualize polygons, see angles, explore formulas, and test yourself with quizzes.",
+        url: "https://www.motsistar.org/tools/polygon-explorer",
+        siteName: "MotsiStar",
+        images: [
+          {
+            url: "/logos/polygon.png",
+            width: 1200,
+            height: 630,
+            alt: "Polygon Explorer Tool by MotsiStar",
+          },
+        ],
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: "Polygon Explorer | MotsiStar",
+        description:
+          "Interactive tool to learn about regular polygons, angles, formulas, and quizzes.",
+        images: ["/logos/polygon.png"],
+      },
+    };
+  }
+
+  return {
+    title: `${tool.name} | MotsiStar`,
+    description: tool.description,
+  };
+}
+
+// ✅ Page (Server Component)
+export default function ToolPage({ params }: { params: { slug: string } }) {
+  const tool = toolsMap[params.slug];
+  if (!tool) return notFound();
+
+  const isPolygonExplorer = params.slug === "polygon-explorer";
 
   return (
     <main className="pt-24 px-4 md:p-8 min-h-screen bg-gray-50">
@@ -133,23 +83,111 @@ export default function ToolPage() {
           </p>
         </header>
 
-        <div className="mt-6 rounded-xl overflow-hidden shadow-lg border border-gray-200">
-          {ToolComponent ? (
-            <ToolComponent />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-96 p-8 bg-white">
-              <Image
-                src={tool.logo}
-                alt={`${tool.name} logo`}
-                width={120}
-                height={120}
-                className="mb-4 rounded-lg"
-              />
-              <p className="text-red-600 font-semibold text-center">
-                This tool is currently unavailable or is still being integrated.
-              </p>
-            </div>
-          )}
+        {/* ✅ JSON-LD Structured Data for Polygon Explorer */}
+        {isPolygonExplorer && (
+          <>
+            {/* Educational Schema */}
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "EducationalOccupationalProgram",
+                  name: "Polygon Explorer",
+                  description:
+                    "An interactive tool to explore regular polygons: visualize shapes, angles, formulas, and test your knowledge with quizzes.",
+                  provider: {
+                    "@type": "Organization",
+                    name: "MotsiStar",
+                    url: "https://www.motsistar.org",
+                  },
+                  educationalLevel: "High School",
+                  teaches: [
+                    "Regular polygons",
+                    "Interior and exterior angles",
+                    "Polygon side relationships",
+                    "Geometry formulas",
+                  ],
+                  url: "https://www.motsistar.org/tools/polygon-explorer",
+                  image: "https://www.motsistar.org/logos/polygon.png",
+                  inLanguage: "en",
+                }),
+              }}
+            />
+
+            {/* FAQ Schema */}
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "FAQPage",
+                  mainEntity: [
+                    {
+                      "@type": "Question",
+                      name: "What is a regular polygon?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "A regular polygon is a polygon with all sides and all angles equal. Examples include an equilateral triangle, square, regular pentagon, etc.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "How do you calculate the interior angle of a polygon?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "The interior angle of a regular polygon is given by the formula: Interior Angle = (n - 2) × 180° / n, where n is the number of sides.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "What is the exterior angle of a polygon?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "The exterior angle of a regular polygon is given by: Exterior Angle = 360° / n, where n is the number of sides.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "Do exterior angles always add up to 360°?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Yes, the sum of all exterior angles of any polygon, regular or irregular, is always 360°.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "How do you calculate the sum of interior angles?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "The sum of the interior angles of a polygon is (n - 2) × 180°, where n is the number of sides.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "What is the relationship between interior and exterior angles?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "For any regular polygon, Interior Angle + Exterior Angle = 180°.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "What happens as the number of sides increases?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "As the number of sides increases, a regular polygon approaches the shape of a circle. Its interior angles get closer to 180°, while each exterior angle gets closer to 0°.",
+                      },
+                    },
+                  ],
+                }),
+              }}
+            />
+          </>
+        )}
+
+        <div className="mt-6 rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-white">
+          <ToolRenderer slug={params.slug} />
         </div>
       </div>
     </main>

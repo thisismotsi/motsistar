@@ -9,6 +9,16 @@ export type ToolData = {
 };
 
 export const toolsArray: ToolData[] = [
+  // ✅ Custom tools
+  {
+    slug: "polygon-explorer",
+    name: "Polygon Explorer",
+    description:
+      "Visualize and explore regular polygons inside a circle, and learn about their sides, interior, and exterior angles.",
+    category: "Math",
+    link: "/tools/polygon-explorer",
+    logo: "/logos/polygon.png",
+  },
   {
     slug: "desmos-calculator",
     name: "Desmos Graphing Calculator",
@@ -195,17 +205,6 @@ export const toolsArray: ToolData[] = [
     category: "Chemistry",
     link: "/tools/phet-molecule-shapes",
     logo: "/logos/phet.png",
-  },
-
-  // ✅ New Polygon Explorer tool
-  {
-    slug: "polygon-explorer",
-    name: "Polygon Explorer",
-    description:
-      "Visualize and explore regular polygons inside a circle, and learn about their sides, interior, and exterior angles.",
-    category: "Math",
-    link: "/tools/polygon-explorer",
-    logo: "/logos/polygon.svg", // 👉 add a polygon icon in your /public/logos folder
   },
 ];
 
