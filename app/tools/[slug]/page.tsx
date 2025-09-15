@@ -8,9 +8,11 @@ import ToolRenderer from "./ToolRenderer";
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params?: { slug?: string };
 }): Promise<Metadata> {
-  const tool = toolsMap[params.slug];
+  // runtime-safe guard for params.slug to avoid build-time typing mismatch
+  const slug = params && typeof params.slug === "string" ? params.slug : "";
+  const tool = toolsMap[slug];
   if (!tool) {
     return {
       title: "Tool Not Found | MotsiStar",
@@ -18,7 +20,7 @@ export async function generateMetadata({
     };
   }
 
-  if (params.slug === "polygon-explorer") {
+  if (slug === "polygon-explorer") {
     return {
       title: "Polygon Explorer | Regular Polygon Tool & Calculator | MotsiStar",
       description:
