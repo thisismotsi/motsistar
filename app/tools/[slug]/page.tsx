@@ -67,11 +67,17 @@ export async function generateMetadata({
 }
 
 // ✅ Page (Server Component)
-export default function ToolPage({ params }: { params: { slug: string } }) {
-  const tool = toolsMap[params.slug];
+export default function ToolPage(props: unknown) {
+  // runtime-safe extraction to avoid Next.js PageProps constraint issues during build
+  const { params } = (props as { params?: { slug?: string } }) || {};
+  const slug = params?.slug;
+
+  if (!slug) return notFound();
+
+  const tool = toolsMap[slug];
   if (!tool) return notFound();
 
-  const isPolygonExplorer = params.slug === "polygon-explorer";
+  const isPolygonExplorer = slug === "polygon-explorer";
 
   return (
     <main className="pt-24 px-4 md:p-8 min-h-screen bg-gray-50">
@@ -189,7 +195,7 @@ export default function ToolPage({ params }: { params: { slug: string } }) {
         )}
 
         <div className="mt-6 rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-white">
-          <ToolRenderer slug={params.slug} />
+          <ToolRenderer slug={slug} />
         </div>
       </div>
     </main>

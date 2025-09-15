@@ -48,9 +48,9 @@ export default function InteractiveLearningPage() {
           Explore Interactive Learning Tools
         </h2>
         <h3 className="text-md text-muted-foreground mb-6 text-center">
-          The learning tools featured below are created and owned by their
-          respective developers and organizations. motsistar.org does not host
-          or modify these tools. Usage should follow the terms set by each
+          Some of the learning tools featured below are created and owned by
+          their respective developers and organizations. motsistar.org may not
+          host or modify these tools. Usage should follow the terms set by each
           creator—official sites which you can find{" "}
           <Link
             href={"/affiliates"}
